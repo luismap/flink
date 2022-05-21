@@ -1,4 +1,7 @@
+import org.apache.flink.api.common.functions.MapFunction
+
 import java.io.File
+import scala.io.Source
 
 object Utils {
 
@@ -13,4 +16,19 @@ object Utils {
         )
     }: _*)
   }
+
+  def show(n: Int,file: File ) = {
+    Source.fromFile(file.getPath)
+      .getLines()
+      .take(n)
+      .foreach(println)
+    println("\n")
+  }
+
+  class Splitter(del: String) extends MapFunction[String, Array[String]]
+    {
+      override def map(value: String): Array[String] =
+        value.split(del)
+    }
+
 }

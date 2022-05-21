@@ -24,7 +24,11 @@ object Flink {
 
     //DataStreamFromSocket()
 
-    DSreduce(files("avg20"))
+    //DSreduce(files("avg20"))
+
+    Aggregations.minTuples(files("avg20"))
+    Aggregations.minSchema(files("avg20"))
+    Aggregations.minBySchema(files("avg20"))
   }
 
 }
