@@ -1,10 +1,11 @@
+package utils
+
 import org.apache.flink.api.common.functions.MapFunction
-import org.apache.flink.api.java.utils.ParameterTool
-import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 
 import java.io.File
 
 object Tokenizer {
+
   import org.apache.flink.api.scala._
 
   def tokenize(file: File) = {

@@ -1,4 +1,4 @@
-import Utils.Splitter
+import utils.Utils.Splitter
 
 import scala.collection.parallel.Splitter
 

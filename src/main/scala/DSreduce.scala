@@ -1,5 +1,5 @@
 import Schemas.{BuySchema, MonthAvgSchema}
-import Utils.show
+import utils.Utils.show
 import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 
