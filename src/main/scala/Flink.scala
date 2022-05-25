@@ -28,12 +28,10 @@ object Flink {
    // Aggregations.minTuples(files("avg20"))
     //Aggregations.minSchema(files("avg20"))
     //Aggregations.minBySchema(files("avg20"))
+    //GenerateRandomNum(new File("randomInts"))
+    //Split(files("randomInts"))
 
-    GenerateRandomNum(new File("randomInts"))
-
-    Split(files("randomInts"))
-
-    println("back to main")
+    Iterate()
 
   }
 
