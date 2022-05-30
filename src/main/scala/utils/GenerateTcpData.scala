@@ -18,10 +18,11 @@ object GenerateTcpData {
                    id: UUID,
                    name: String,
                    qty: Int,
-                   time: Long
+                   time: Long,
+                   row_num: Int
                  ) {
     def toCsv: String = {
-      s"$id $name $qty $time"
+      s"$id $name $qty $time $row_num"
     }
   }
 
@@ -30,6 +31,7 @@ object GenerateTcpData {
     val server = new ServerSocket(9090)
 
     val conn = server.accept()
+    var cnt = 0
 
     try {
       while (true){
@@ -41,10 +43,13 @@ object GenerateTcpData {
             UUID.randomUUID(),
             names(Random.nextInt(3)),
             Random.nextInt(1000),
-            time
+            time,
+            cnt
           )
         out.println(data.toCsv)
         Thread.sleep(200)
+        cnt += 1
+        if (cnt % 10 == 0) Thread.sleep(1000) //for session window
       }
     }
     finally {

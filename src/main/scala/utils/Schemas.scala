@@ -8,7 +8,8 @@ object Schemas {
                    id: String,
                    name: String,
                    qty: Int,
-                   time: Long
+                   time: Long,
+                   row_num: Int
                  ) {
     def toCsv: String = {
       s"$id $name $qty $time"
@@ -16,8 +17,8 @@ object Schemas {
   }
   object StreamSchema {
     def apply(data: Array[String]): StreamSchema = data match {
-      case Array(id, name, qty, time) =>
-        new StreamSchema(id,name, qty.toInt, time.toLong)
+      case Array(id, name, qty, time, row_num) =>
+        new StreamSchema(id,name, qty.toInt, time.toLong, row_num.toInt)
     }
   }
 

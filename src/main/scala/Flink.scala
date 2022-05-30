@@ -1,7 +1,7 @@
 import org.apache.flink.api.java.utils.ParameterTool
 import utils.{GenerateTcpData, Tokenizer, Utils}
 import my_akka_utils.{GenerateRandomNum, GenerateSocketData, GenerateSocketDataMain}
-import windows.TumblingWindow
+import windows.{SessionWindow, SlidingWindow, TumblingWindow}
 
 import java.io.File
 
@@ -39,7 +39,11 @@ object Flink {
 
 
 
-    TumblingWindow()
+    //TumblingWindow()
+
+    //SlidingWindow()
+
+    SessionWindow()
 
   }
 

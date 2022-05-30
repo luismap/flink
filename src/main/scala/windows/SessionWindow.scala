@@ -3,11 +3,11 @@ package windows
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.windowing.assigners.{SlidingEventTimeWindows, SlidingProcessingTimeWindows, TumblingEventTimeWindows}
+import org.apache.flink.streaming.api.windowing.assigners.{EventTimeSessionWindows, SlidingEventTimeWindows}
 import org.apache.flink.streaming.api.windowing.time.Time
 import utils.{GenerateTcpData, Schemas, Utils}
 
-object SlidingWindow {
+object SessionWindow {
 
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
 
@@ -30,12 +30,12 @@ object SlidingWindow {
       )
 
     val window = withWaterMark
-      .map(stream => (stream.time, stream.name, stream.row_num))
+      .map(stream => (stream.time, stream.name, stream.row_num, 1))
       .keyBy(_._2)
-      .window(SlidingEventTimeWindows.of(Time.seconds(3), Time.seconds(1)))
-      .reduce(new ReduceFunction[(Long, String, Int)] {
-        override def reduce(value1: (Long, String, Int), value2: (Long, String, Int)): (Long, String, Int) =
-          (value1._1, value1._2, value1._3 + value2._3)
+      .window(EventTimeSessionWindows.withGap(Time.seconds(1)))
+      .reduce(new ReduceFunction[(Long, String, Int, Int)] {
+        override def reduce(value1: (Long, String, Int, Int), value2: (Long, String, Int, Int)): (Long, String, Int, Int) =
+          (value1._1, value1._2, value1._3 + value2._3, value1._4 + value2._4)
       })
 
 
