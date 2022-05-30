@@ -1,15 +1,13 @@
-import org.apache.flink.api.common.eventtime.{AscendingTimestampsWatermarks, SerializableTimestampAssigner, WatermarkStrategy}
+package windows
+
+import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
 import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import utils.{GenerateTcpData, Schemas, Utils}
 
-import java.time.Duration
-import scala.collection.parallel.Splitter
-import scala.concurrent.duration.DurationInt
-
-object TumblingWindow {
+object SlidingWindow {
 
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
 
@@ -37,9 +35,8 @@ object TumblingWindow {
       .window(TumblingEventTimeWindows.of(Time.seconds(3)))
       .reduce(new ReduceFunction[(Long, String, Int)] {
         override def reduce(value1: (Long, String, Int), value2: (Long, String, Int)): (Long, String, Int) =
-          (value1._1, value1._2, value1._3 +  value2._3)
+          (value1._1, value1._2, value1._3 + value2._3)
       })
-
 
 
     window.print()
