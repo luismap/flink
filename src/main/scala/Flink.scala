@@ -1,6 +1,8 @@
+import evictors.Evictor
 import org.apache.flink.api.java.utils.ParameterTool
 import utils.{GenerateTcpData, Tokenizer, Utils}
 import my_akka_utils.{GenerateRandomNum, GenerateSocketData, GenerateSocketDataMain}
+import watermark.WaterMarkDemo
 import windows.{GlobalWindow, SessionWindow, SlidingWindow, TumblingWindow}
 
 import java.io.File
@@ -45,8 +47,11 @@ object Flink {
 
     //SessionWindow()
 
-    GlobalWindow()
+    //GlobalWindow()
 
+    //Evictor()
+
+    WaterMarkDemo()
   }
 
 }
