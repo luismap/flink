@@ -1,0 +1,8 @@
+resources/randomInts
+.idea/*
+akka/target/*
+project/*
+*.DS_Store
+
+target/*
+.bsp/*
