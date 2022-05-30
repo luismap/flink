@@ -1,6 +1,7 @@
 import org.apache.flink.api.java.utils.ParameterTool
-import utils.{Tokenizer, Utils}
-import my_akka_utils.GenerateRandomNum
+import utils.{GenerateTcpData, Tokenizer, Utils}
+import my_akka_utils.{GenerateRandomNum, GenerateSocketData, GenerateSocketDataMain}
+
 import java.io.File
 
 object Flink {
@@ -31,7 +32,13 @@ object Flink {
     //GenerateRandomNum(new File("randomInts"))
     //Split(files("randomInts"))
 
-    Iterate()
+    //Iterate()
+
+    //CabAnalysis(files("cab_flink_30.txt"))
+
+
+
+    TumblingWindow()
 
   }
 

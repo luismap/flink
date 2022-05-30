@@ -13,7 +13,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion,
       "org.apache.flink" %% "flink-streaming-scala" % flinkVersion,
-      "org.apache.flink" %% "flink-clients" % flinkVersion
+      "org.apache.flink" %% "flink-clients" % flinkVersion,
+      "joda-time" % "joda-time" % "2.10.6"
+
     )
   )
 

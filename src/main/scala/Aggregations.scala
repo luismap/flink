@@ -1,4 +1,4 @@
-import Schemas.BuySchema
+import utils.Schemas.BuySchema
 import utils.Utils.{Splitter, show}
 import org.apache.flink.api.java.ExecutionEnvironment
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
