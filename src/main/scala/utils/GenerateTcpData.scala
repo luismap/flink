@@ -31,7 +31,7 @@ object GenerateTcpData {
     val server = new ServerSocket(9090)
 
     val conn = server.accept()
-    var cnt = 0
+    var cnt = 1
 
     try {
       while (true){
