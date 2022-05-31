@@ -1,13 +1,13 @@
 package state
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction
-import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
+import org.apache.flink.api.common.state.{ListState, ListStateDescriptor, ValueState, ValueStateDescriptor}
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.util.Collector
 import utils.{GenerateTcpData, Schemas, Utils}
 
-object ValueState {
+object MyListState {
 
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
 
@@ -30,38 +30,39 @@ object ValueState {
 
   }
 
-  class StatefulCount extends RichFlatMapFunction[Schemas.StreamSchema, (String, Seq[Int], Int)] {
-    //state name (sum)
-    private var sum: ValueState[(String, Seq[Int], Int)] = _
+  class StatefulCount extends RichFlatMapFunction[Schemas.StreamSchema, (String, Int, String)] {
+    private var sum: ValueState[(String, Int)] = _
+    private var rowNums: ListState[Int] = _ //if you want to use an Iterator
     private var cnt: ValueState[Int] = _
 
 
-    override def flatMap(value: Schemas.StreamSchema, out: Collector[(String, Seq[Int], Int)]): Unit = {
-    val currentValue = if ( sum.value() != null) sum.value() else ("",Seq.empty[Int],0)
-    val currentCnt = cnt.value()
+    override def flatMap(value: Schemas.StreamSchema, out: Collector[(String, Int,String)]): Unit = {
+      val currentValue = if (sum.value() != null) sum.value() else ("", 0)
+      val currentCnt = cnt.value()
 
 
-    if (currentCnt >= 10){
-      val a = currentValue._3 - 10
-      val b = currentValue._3
-      val ans = (10 * (a + b))/2
-      out.collect((currentValue._1, currentValue._2, ans))
-      sum.clear()
-      cnt.clear()
+      if (currentCnt >= 10) {
+        out.collect((currentValue._1, currentValue._2, rowNums.get().toString))
+        sum.clear()
+        cnt.clear()
 
-    } else {
-      sum.update((value.name, currentValue._2 :+ value.row_num, value.row_num))
-      cnt.update(currentCnt +  1)
-    }
+      } else {
+        sum.update((value.name, value.row_num))
+        cnt.update(currentCnt + 1)
+      }
 
     }
 
     override def open(parameters: Configuration): Unit = {
       sum = getRuntimeContext.getState(
-        new ValueStateDescriptor[(String,Seq[Int], Int)]("sum", createTypeInformation[(String,Seq[Int], Int)])
+        new ValueStateDescriptor[(String, Int)]("sum", createTypeInformation[(String, Int)])
       )
       cnt = getRuntimeContext.getState(
         new ValueStateDescriptor[Int]("cnt", createTypeInformation[Int])
+      )
+
+      rowNums = getRuntimeContext.getListState(
+        new ListStateDescriptor[Int]("rowNums", classOf[Int])
       )
     }
   }
