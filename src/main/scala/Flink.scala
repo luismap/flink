@@ -3,6 +3,7 @@ import org.apache.flink.api.java.utils.ParameterTool
 import utils.{GenerateTcpData, Tokenizer, Utils}
 import my_akka_utils.{GenerateRandomNum, GenerateSocketData, GenerateSocketDataMain}
 import state.{MyListState, MyReduceState, MyValueState}
+import train.IpDataAnalysis
 import watermark.WaterMarkDemo
 import windows.{GlobalWindow, SessionWindow, SlidingWindow, TumblingWindow}
 
@@ -55,7 +56,9 @@ object Flink {
     //WaterMarkDemo()
 
     //MyListState()
-    MyReduceState()
+    //MyReduceState()
+
+    IpDataAnalysis(files("ip-data.txt"))
   }
 
 }

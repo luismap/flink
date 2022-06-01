@@ -9,6 +9,12 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger
 import utils.{GenerateTcpData, Schemas, Utils}
 
+/**
+ *
+ * Processing time: Processing time refers to the system time of the machine that is executing the respective operation.
+ * Event time: Event time is the time that each individual event occurred on its producing device.
+ *
+ */
 object WaterMarkDemo {
 
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
