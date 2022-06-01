@@ -1,10 +1,11 @@
+package train
+
 import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import utils.Schemas.Cab
 import utils.{Schemas, Utils}
-import Schemas.Cab
 
 import java.io.File
-
 
 object CabAnalysis {
 
@@ -14,7 +15,7 @@ object CabAnalysis {
 
   def parseRecord(data: DataStream[String]): DataStream[Cab] = {
     data
-      .map(  new Utils.Splitter(","))
+      .map(new Utils.Splitter(","))
       .map(Schemas.Cab(_))
   }
 
@@ -24,7 +25,7 @@ object CabAnalysis {
       .keyBy(_._1)
       .reduce(new ReduceFunction[(String, Int)] {
         override def reduce(value1: (String, Int), value2: (String, Int)): (String, Int) =
-          (value1._1, value2._2 +  value1._2)
+          (value1._1, value2._2 + value1._2)
       })
       .map(e => (1, e._1, e._2))
       .keyBy(_._1)
@@ -35,13 +36,13 @@ object CabAnalysis {
 
   def avgPaxByPickupLoc(ds: DataStream[Cab]) = {
     val avgPax = ds
-      .map(cab => (cab.pickup_loc, cab.passenger_cnt.toInt,1))
+      .map(cab => (cab.pickup_loc, cab.passenger_cnt.toInt, 1))
       .keyBy(_._1)
       .reduce(
         new ReduceFunction[(String, Int, Int)] {
           override def reduce(value1: (String, Int, Int),
                               value2: (String, Int, Int)): (String, Int, Int) =
-            (value1._1, value1._2 + value2._2 / (value1._3 + 1) , value1._3 + 1)
+            (value1._1, value1._2 + value2._2 / (value1._3 + 1), value1._3 + 1)
         }
       )
 
@@ -50,7 +51,7 @@ object CabAnalysis {
 
   def avgTripByDriver(ds: DataStream[Cab]) = {
     val avgTrips = ds
-      .map(cab => (cab.driver_name, cab.passenger_cnt.toInt, 1 ))
+      .map(cab => (cab.driver_name, cab.passenger_cnt.toInt, 1))
       .keyBy(_._1)
       .reduce(new ReduceFunction[(String, Int, Int)] {
         override def reduce(value1: (String, Int, Int),
@@ -63,11 +64,11 @@ object CabAnalysis {
     avgTrips.print()
   }
 
-  def apply(file: File)  = {
+  def apply(file: File) = {
     Utils.show(10, file)
     val data = streamEnv.readTextFile(file.getPath)
     val parsed = parseRecord(data)
-    val filtered = parsed.filter(_.is_ongoing =="yes")
+    val filtered = parsed.filter(_.is_ongoing == "yes")
 
     popularLoc(filtered)
 

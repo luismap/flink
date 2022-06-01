@@ -1,13 +1,15 @@
 package state
 
-import org.apache.flink.api.common.functions.RichFlatMapFunction
-import org.apache.flink.api.common.state.{ListState, ListStateDescriptor, ValueState, ValueStateDescriptor}
+import org.apache.flink.api.common.functions.{ReduceFunction, RichFlatMapFunction}
+import org.apache.flink.api.common.state.{ListState, ListStateDescriptor, ReducingState, ReducingStateDescriptor, ValueState, ValueStateDescriptor}
+import org.apache.flink.api.java.functions.FirstReducer
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, createTypeInformation}
 import org.apache.flink.util.Collector
 import utils.{GenerateTcpData, Schemas, Utils}
 
-object MyListState {
+
+object MyReduceState {
 
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
 
@@ -31,31 +33,32 @@ object MyListState {
   }
 
   /**
-   * ListState<T>: This keeps a list of elements. You can append elements and retrieve an Iterable over
-   * all currently stored elements. Elements are added using add(T) or addAll(List<T>), the Iterable can
-   * be retrieved using Iterable<T> get(). You can also override the existing list with update(List<T>)
+   * ReducingState
+   * This keeps a single value that represents the aggregation of all values added to the state.
+   * The interface is similar to ListState but elements added using add(T) are reduced to an aggregate
+   * using a specified ReduceFunction
    */
   class StatefulCount extends RichFlatMapFunction[Schemas.StreamSchema, (String, Int, String)] {
     private var sum: ValueState[(String, Int)] = _
-    private var rowNums: ListState[Int] = _ //if you want to use an Iterator
+    private var rowNumsSum: ReducingState[Int] = _
     private var cnt: ValueState[Int] = _
 
 
-    override def flatMap(value: Schemas.StreamSchema, out: Collector[(String, Int,String)]): Unit = {
+    override def flatMap(value: Schemas.StreamSchema, out: Collector[(String, Int, String)]): Unit = {
       val currentValue = if (sum.value() != null) sum.value() else ("", 0)
       val currentCnt = cnt.value()
 
 
       if (currentCnt >= 10) {
-        out.collect((currentValue._1, currentValue._2, rowNums.get().toString))
-        sum.clear()
+        out.collect((currentValue._1, currentValue._2, rowNumsSum.get().toString))
         cnt.clear()
-        rowNums.clear()
+        sum.clear()
+        rowNumsSum.clear()
 
       } else {
         sum.update((value.name, value.row_num))
         cnt.update(currentCnt + 1)
-        rowNums.add(value.row_num)
+        rowNumsSum.add(value.row_num)
       }
 
     }
@@ -68,8 +71,11 @@ object MyListState {
         new ValueStateDescriptor[Int]("cnt", createTypeInformation[Int])
       )
 
-      rowNums = getRuntimeContext.getListState(
-        new ListStateDescriptor[Int]("rowNums", classOf[Int])
+      rowNumsSum = getRuntimeContext.getReducingState(
+        new ReducingStateDescriptor[Int]("rowNumsSum", new ReduceFunction[Int] {
+          override def reduce(value1: Int, value2: Int): Int =
+            value1 + value2
+        }, classOf[Int])
       )
     }
   }
