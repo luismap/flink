@@ -1,8 +1,26 @@
 package utils
 
 import java.util.UUID
+import javax.management.monitor.StringMonitor
 
 object Schemas {
+
+  //user_id,network_name,user_IP,user_country,website, Time spent before next click
+
+  case class IpSchema (
+    user_id: String,
+    network_name: String,
+    user_ip:Long,
+    user_country: String,
+    website: String,
+    time_spent_seconds: Int,
+                      )
+  object IpSchema{
+    def apply(data: Array[String]): IpSchema = data match {
+      case Array(uid, nname, uip, ucntry, website, timespentscnds) =>
+        new IpSchema(uid,nname, uip.toLong, ucntry, website, timespentscnds.toInt)
+    }
+  }
 
   case class StreamSchema(
                    id: String,
