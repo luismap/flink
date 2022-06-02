@@ -6,37 +6,53 @@ import javax.management.monitor.StringMonitor
 object Schemas {
 
   //user_id,network_name,user_IP,user_country,website, Time spent before next click
+  case class EmployeeData(
+                           employee_id: String,
+                           name: String,
+                           role: String,
+                           department: String,
+                           department_id: String
+                         )
 
-  case class IpSchema (
-    user_id: String,
-    network_name: String,
-    user_ip:Long,
-    user_country: String,
-    website: String,
-    time_spent_seconds: Int,
-                      )
-  object IpSchema{
+  object EmployeeData {
+    def apply(data: Array[String]): EmployeeData = data match {
+      case Array(eid, name, role, dpt, dptId) =>
+        new EmployeeData(eid, name, role, dpt, dptId)
+    }
+  }
+
+  case class IpSchema(
+                       user_id: String,
+                       network_name: String,
+                       user_ip: Long,
+                       user_country: String,
+                       website: String,
+                       time_spent_seconds: Int,
+                     )
+
+  object IpSchema {
     def apply(data: Array[String]): IpSchema = data match {
       case Array(uid, nname, uip, ucntry, website, timespentscnds) =>
-        new IpSchema(uid,nname, uip.toLong, ucntry, website, timespentscnds.toInt)
+        new IpSchema(uid, nname, uip.toLong, ucntry, website, timespentscnds.toInt)
     }
   }
 
   case class StreamSchema(
-                   id: String,
-                   name: String,
-                   qty: Int,
-                   time: Long,
-                   row_num: Int
-                 ) {
+                           id: String,
+                           name: String,
+                           qty: Int,
+                           time: Long,
+                           row_num: Int
+                         ) {
     def toCsv: String = {
       s"$id $name $qty $time"
     }
   }
+
   object StreamSchema {
     def apply(data: Array[String]): StreamSchema = data match {
       case Array(id, name, qty, time, row_num) =>
-        new StreamSchema(id,name, qty.toInt, time.toLong, row_num.toInt)
+        new StreamSchema(id, name, qty.toInt, time.toLong, row_num.toInt)
     }
   }
 
