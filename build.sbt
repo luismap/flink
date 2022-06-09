@@ -14,8 +14,10 @@ lazy val root = (project in file("."))
       "org.apache.flink" %% "flink-scala" % flinkVersion,
       "org.apache.flink" %% "flink-streaming-scala" % flinkVersion,
       "org.apache.flink" %% "flink-clients" % flinkVersion,
+      "org.apache.flink" %% "flink-connector-twitter" % flinkVersion,
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+      "commons-logging" % "commons-logging" % "1.2",
       "joda-time" % "joda-time" % "2.10.6"
-
     )
   )
 

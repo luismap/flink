@@ -1,4 +1,6 @@
 resources/randomInts
+
+src/main/scala/twitter/app.properties
 .idea/*
 akka/target/*
 project/*
