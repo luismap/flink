@@ -4,6 +4,7 @@ import utils.{GenerateTcpData, Tokenizer, Utils}
 import my_akka_utils.{GenerateRandomNum, GenerateSocketData, GenerateSocketDataMain}
 import state.{MyBroadCastState, MyListState, MyReduceState, MyValueState}
 import train.IpDataAnalysis
+import twitter.Twitter
 import watermark.WaterMarkDemo
 import windows.{GlobalWindow, SessionWindow, SlidingWindow, TumblingWindow}
 
@@ -60,7 +61,9 @@ object Flink {
 
     //IpDataAnalysis(files("ip-data.txt"))
 
-    MyBroadCastState()
+   // MyBroadCastState()
+
+    Twitter()
   }
 
 }
